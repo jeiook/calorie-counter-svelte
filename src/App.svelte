@@ -1,47 +1,55 @@
-<script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
-</script>
-
 <main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
+  <h1>Calorie Counter</h1>
+  <div class="container">
+    <form id="calorie-counter">
+      <label for="budget">Budget</label>
+      <input
+        type="number"
+        min="0"
+        id="budget"
+        placeholder="Daily calorie budget"
+        required
+      />
+
+      <fieldset id="breakfast">
+        <legend>Breakfast</legend>
+        <div class="input-container"></div>
+      </fieldset>
+      <fieldset id="lunch">
+        <legend>Lunch</legend>
+        <div class="input-container"></div>
+      </fieldset>
+      <fieldset id="dinner">
+        <legend>Dinner</legend>
+        <div class="input-container"></div>
+      </fieldset>
+      <fieldset id="snacks">
+        <legend>Snacks</legend>
+        <div class="input-container"></div>
+      </fieldset>
+      <fieldset id="exercise">
+        <legend>Exercise</legend>
+        <div class="input-container"></div>
+      </fieldset>
+
+      <div class="controls">
+        <span>
+          <label for="entry-dropdown">Add food or exercise:</label>
+          <select id="entry-dropdown" name="options">
+            <option value="breakfast" selected>Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="snacks">Snacks</option>
+            <option value="exercise">Exercise</option>
+          </select>
+          <button type="button" id="add-entry">Add Entry</button>
+        </span>
+      </div>
+      <div>
+        <button type="submit">Calculate Remaining Calories</button>
+        <button type="button" id="clear">Clear</button>
+      </div>
+    </form>
+    <div id="output" class="output hide"></div>
   </div>
-  <h1>Vite + Svelte</h1>
-
-  <div class="card">
-    <Counter />
-  </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
 </main>
-
-<style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
-</style>
