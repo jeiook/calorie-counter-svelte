@@ -1,9 +1,31 @@
+<script lang="ts">
+  let calorieCounter: HTMLElement;
+  let budgetNumberInput: HTMLElement;
+  let entryDropdown: HTMLElement;
+  let addEntryButton: HTMLElement;
+  let clearButton: HTMLElement;
+  let output: HTMLElement;
+
+  let isError = false;
+
+  function cleanInputString(str: string) {
+    const regex = /[+-\s]/g;
+    return str.replace(regex, "");
+  }
+
+  function isInvalidInput(str: string) {
+    const regex = /\d+e\d+/i;
+    return str.match(regex);
+  }
+</script>
+
 <main>
   <h1>Calorie Counter</h1>
   <div class="container">
-    <form id="calorie-counter">
+    <form bind:this={calorieCounter} id="calorie-counter">
       <label for="budget">Budget</label>
       <input
+        bind:this={budgetNumberInput}
         type="number"
         min="0"
         id="budget"
@@ -35,21 +57,23 @@
       <div class="controls">
         <span>
           <label for="entry-dropdown">Add food or exercise:</label>
-          <select id="entry-dropdown" name="options">
+          <select bind:this={entryDropdown} id="entry-dropdown" name="options">
             <option value="breakfast" selected>Breakfast</option>
             <option value="lunch">Lunch</option>
             <option value="dinner">Dinner</option>
             <option value="snacks">Snacks</option>
             <option value="exercise">Exercise</option>
           </select>
-          <button type="button" id="add-entry">Add Entry</button>
+          <button bind:this={addEntryButton} type="button" id="add-entry"
+            >Add Entry</button
+          >
         </span>
       </div>
       <div>
         <button type="submit">Calculate Remaining Calories</button>
-        <button type="button" id="clear">Clear</button>
+        <button bind:this={clearButton} type="button" id="clear">Clear</button>
       </div>
     </form>
-    <div id="output" class="output hide"></div>
+    <div bind:this={output} id="output" class="output hide"></div>
   </div>
 </main>
