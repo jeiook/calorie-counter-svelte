@@ -1,30 +1,50 @@
 <script lang="ts">
+  import CalorieNumberInput from "./CalorieInput/CalorieNumberInput.svelte";
+
   export let name: string;
 
-  let entries: number[] = [];
+  type Entry = { entryNumber: number; inputEl: CalorieNumberInput | null };
+  let entries: Entry[] = [];
 
   function addEntry() {
     if (entries.length === 0) {
-      entries = [1];
+      entries = [{ entryNumber: 1, inputEl: null }];
       return;
     }
-    entries = [...entries, entries[entries.length - 1] + 1];
+    entries = [
+      ...entries,
+      {
+        entryNumber: entries[entries.length - 1].entryNumber + 1,
+        inputEl: null,
+      },
+    ];
   }
+
+  $: console.log("entries:", entries);
+
+  // function getCaloriesSum() {
+  //   let calories = 0;
+  //   for (const item of list) {
+  //     const currVal = cleanInputString(item.value);
+  //     const invalidInputMatch = isInvalidInput(currVal);
+  //     if (invalidInputMatch) {
+  //       alert(`Invalid Input: ${invalidInputMatch[0]}`);
+  //       isError = true;
+  //       return null;
+  //     }
+  //     calories += Number(currVal);
+  //   }
+  //   return calories;
+  // }
 </script>
 
 <fieldset id={name}>
   <legend>{name}</legend>
   <div class="input-container">
-    {#each entries as entry}
-      <label for="${name}-${entry}-name">Entry {entry} Name</label>
-      <input type="text" id="${name}-${entry}-name" placeholder="Name" />
-      <label for="${name}-${entry}-calories">Entry {entry} Calories</label>
-      <input
-        type="number"
-        min="0"
-        placeholder="Calories"
-        id="${name}-${entry}-calories"
-      />
+    {#each entries as { entryNumber, inputEl } (entryNumber - 1)}
+      <label for="${name}-${entryNumber}-name">Entry {entryNumber} Name</label>
+      <input type="text" id="${name}-${entryNumber}-name" placeholder="Name" />
+      <CalorieNumberInput bind:this={inputEl} {name} order={entryNumber} />
     {/each}
   </div>
   <button on:click={addEntry} type="button" id="add-entry">Add Entry</button>
