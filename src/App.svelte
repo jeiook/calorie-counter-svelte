@@ -1,8 +1,7 @@
 <script lang="ts">
   import CalorieInput from "./components/CalorieInput.svelte";
 
-  let budgetCalories: number;
-  let clearButton: HTMLElement;
+  let budgetCalories: number | null;
 
   type CalorieInputHandle = {
     id: number;
@@ -39,11 +38,18 @@
           : 0
       )
       .reduce((sum, value) => sum + value);
-    remainingCalories = budgetCalories - consumedCalories + burntCalories;
-
+    remainingCalories =
+      (budgetCalories as number) - consumedCalories + burntCalories;
     surplusOrDeficit = remainingCalories < 0 ? "surplus" : "deficit";
-
     showOutput = true;
+  }
+
+  function clearForm() {
+    calorieInputHandles.forEach((inputHandle) =>
+      inputHandle.input?.clearEntries()
+    );
+    showOutput = false;
+    budgetCalories = null;
   }
 </script>
 
@@ -67,7 +73,7 @@
 
       <div>
         <button type="submit">Calculate Remaining Calories</button>
-        <button bind:this={clearButton} type="button" id="clear">Clear</button>
+        <button on:click={clearForm} type="button" id="clear">Clear</button>
       </div>
     </form>
     {#if showOutput}

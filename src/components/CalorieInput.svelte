@@ -29,6 +29,10 @@
     return calories;
   }
 
+  export function clearEntries() {
+    entries = [];
+  }
+
   const updateCalorieValue = (
     e: CustomEvent<{ calories: number }>,
     index: number
