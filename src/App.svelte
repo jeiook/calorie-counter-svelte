@@ -68,7 +68,11 @@
 <main>
   <h1>Calorie Counter</h1>
   <div class="container">
-    <form bind:this={calorieCounter} id="calorie-counter">
+    <form
+      bind:this={calorieCounter}
+      on:submit|preventDefault={() => {}}
+      id="calorie-counter"
+    >
       <label for="budget">Budget</label>
       <input
         bind:this={budgetNumberInput}
