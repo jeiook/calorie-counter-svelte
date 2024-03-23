@@ -1,81 +1,62 @@
 <script lang="ts">
   import CalorieInput from "./components/CalorieInput.svelte";
 
-  let calorieCounter: HTMLElement;
-  let budgetNumberInput: HTMLElement;
+  let budgetCalories: number;
   let clearButton: HTMLElement;
   let output: HTMLElement;
 
-  let isError = false;
-
-  const calorieInputCategories = [
-    "breakfast",
-    "lunch",
-    "dinner",
-    "snacks",
-    "exercise",
+  type CalorieInputHandle = {
+    id: number;
+    name: string;
+    input: CalorieInput | null;
+    consumed: boolean;
+  };
+  const calorieInputHandles: CalorieInputHandle[] = [
+    { id: 0, name: "breakfast", input: null, consumed: true },
+    { id: 1, name: "lunch", input: null, consumed: true },
+    { id: 2, name: "dinner", input: null, consumed: true },
+    { id: 3, name: "snacks", input: null, consumed: true },
+    { id: 4, name: "exercise", input: null, consumed: false },
   ];
 
-  // function calculateCalories(e: Event) {
-  //   e.preventDefault();
-  //   isError = false;
-  //   const breakfastNumberInputs = document.querySelectorAll(
-  //     "#breakfast input[type=number]"
-  //   );
-  //   const lunchNumberInputs = document.querySelectorAll(
-  //     "#lunch input[type=number]"
-  //   );
-  //   const dinnerNumberInputs = document.querySelectorAll(
-  //     "#dinner input[type=number]"
-  //   );
-  //   const snacksNumberInputs = document.querySelectorAll(
-  //     "#snacks input[type=number]"
-  //   );
-  //   const exerciseNumberInputs = document.querySelectorAll(
-  //     "#exercise input[type=number]"
-  //   );
-  //   const breakfastCalories = getCaloriesFromInputs(breakfastNumberInputs);
-  //   const lunchCalories = getCaloriesFromInputs(lunchNumberInputs);
-  //   const dinnerCalories = getCaloriesFromInputs(dinnerNumberInputs);
-  //   const snacksCalories = getCaloriesFromInputs(snacksNumberInputs);
-  //   const exerciseCalories = getCaloriesFromInputs(exerciseNumberInputs);
-  //   const budgetCalories = getCaloriesFromInputs([budgetNumberInput]);
+  function calculateCalories() {
+    const consumedCalories = calorieInputHandles
+      .map((inputHandle) =>
+        inputHandle.consumed && inputHandle.input
+          ? inputHandle.input.getCaloriesSum()
+          : 0
+      )
+      .reduce((sum, value) => sum + value);
+    const burntCalories = calorieInputHandles
+      .map((inputHandle) =>
+        !inputHandle.consumed && inputHandle.input
+          ? inputHandle.input.getCaloriesSum()
+          : 0
+      )
+      .reduce((sum, value) => sum + value);
+    const remainingCalories = budgetCalories - consumedCalories + burntCalories;
 
-  //   if (isError) {
-  //     return;
-  //   }
+    const surplusOrDeficit = remainingCalories < 0 ? "Surplus" : "Deficit";
 
-  //   const consumedCalories =
-  //     breakfastCalories + lunchCalories + dinnerCalories + snacksCalories;
-  //   const remainingCalories =
-  //     budgetCalories - consumedCalories + exerciseCalories;
-  //   const surplusOrDeficit = remainingCalories < 0 ? "Surplus" : "Deficit";
-
-  //   output.innerHTML = `<span class="${surplusOrDeficit.toLowerCase()}">${Math.abs(
-  //     remainingCalories
-  //   )} Calorie ${surplusOrDeficit}</span>
-  // <hr>
-  // <p>${budgetCalories} Calories Budgeted</p>
-  // <p>${consumedCalories} Calories Consumed</p>
-  // <p>${exerciseCalories} Calories Burned</p>
-  // `;
-  //   output.classList.remove("hide");
-  // }
-
-  // calorieCounter.addEventListener("submit", calculateCalories);
+    output.innerHTML = `<span class="${surplusOrDeficit.toLowerCase()}">${Math.abs(
+      remainingCalories
+    )} Calorie ${surplusOrDeficit}</span>
+  <hr>
+  <p>${budgetCalories} Calories Budgeted</p>
+  <p>${consumedCalories} Calories Consumed</p>
+  <p>${burntCalories} Calories Burned</p>
+  `;
+    output.classList.remove("hide");
+  }
 </script>
 
 <main>
   <h1>Calorie Counter</h1>
   <div class="container">
-    <form
-      bind:this={calorieCounter}
-      on:submit|preventDefault={() => {}}
-      id="calorie-counter"
-    >
+    <form on:submit|preventDefault={calculateCalories} id="calorie-counter">
       <label for="budget">Budget</label>
       <input
-        bind:this={budgetNumberInput}
+        bind:value={budgetCalories}
         type="number"
         min="0"
         id="budget"
@@ -83,8 +64,8 @@
         required
       />
 
-      {#each calorieInputCategories as category}
-        <CalorieInput name={category} />
+      {#each calorieInputHandles as { id, name, input } (id)}
+        <CalorieInput bind:this={input} {name} />
       {/each}
 
       <div>
