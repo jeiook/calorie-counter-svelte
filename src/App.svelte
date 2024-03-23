@@ -3,7 +3,6 @@
 
   let budgetCalories: number;
   let clearButton: HTMLElement;
-  let output: HTMLElement;
 
   type CalorieInputHandle = {
     id: number;
@@ -19,34 +18,32 @@
     { id: 4, name: "exercise", input: null, consumed: false },
   ];
 
+  let consumedCalories: number;
+  let burntCalories: number;
+  let remainingCalories: number;
+  let surplusOrDeficit: "surplus" | "deficit";
+  let showOutput: boolean = false;
+
   function calculateCalories() {
-    const consumedCalories = calorieInputHandles
+    consumedCalories = calorieInputHandles
       .map((inputHandle) =>
         inputHandle.consumed && inputHandle.input
           ? inputHandle.input.getCaloriesSum()
           : 0
       )
       .reduce((sum, value) => sum + value);
-    const burntCalories = calorieInputHandles
+    burntCalories = calorieInputHandles
       .map((inputHandle) =>
         !inputHandle.consumed && inputHandle.input
           ? inputHandle.input.getCaloriesSum()
           : 0
       )
       .reduce((sum, value) => sum + value);
-    const remainingCalories = budgetCalories - consumedCalories + burntCalories;
+    remainingCalories = budgetCalories - consumedCalories + burntCalories;
 
-    const surplusOrDeficit = remainingCalories < 0 ? "Surplus" : "Deficit";
+    surplusOrDeficit = remainingCalories < 0 ? "surplus" : "deficit";
 
-    output.innerHTML = `<span class="${surplusOrDeficit.toLowerCase()}">${Math.abs(
-      remainingCalories
-    )} Calorie ${surplusOrDeficit}</span>
-  <hr>
-  <p>${budgetCalories} Calories Budgeted</p>
-  <p>${consumedCalories} Calories Consumed</p>
-  <p>${burntCalories} Calories Burned</p>
-  `;
-    output.classList.remove("hide");
+    showOutput = true;
   }
 </script>
 
@@ -73,6 +70,16 @@
         <button bind:this={clearButton} type="button" id="clear">Clear</button>
       </div>
     </form>
-    <div bind:this={output} id="output" class="output hide"></div>
+    {#if showOutput}
+      <div id="output" class="output">
+        <span class={`${surplusOrDeficit}`}
+          >{Math.abs(remainingCalories)} Calorie {surplusOrDeficit}</span
+        >
+        <hr />
+        <p>{budgetCalories} Calories Budgeted</p>
+        <p>{consumedCalories} Calories Consumed</p>
+        <p>{burntCalories} Calories Burned</p>
+      </div>
+    {/if}
   </div>
 </main>

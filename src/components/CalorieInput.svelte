@@ -3,40 +3,51 @@
 
   export let name: string;
 
-  type Entry = { entryNumber: number; inputEl: CalorieNumberInput | null };
+  type Entry = { entryNumber: number; calorieValue: number };
   let entries: Entry[] = [];
 
   function addEntry() {
     if (entries.length === 0) {
-      entries = [{ entryNumber: 1, inputEl: null }];
+      entries = [{ entryNumber: 1, calorieValue: 0 }];
       return;
     }
     entries = [
       ...entries,
       {
         entryNumber: entries[entries.length - 1].entryNumber + 1,
-        inputEl: null,
+        calorieValue: 0,
       },
     ];
   }
 
   export function getCaloriesSum() {
     let calories = 0;
-    for (const entry of entries) {
-      if (!entry.inputEl) continue;
-      calories += entry.inputEl.getCalories();
+    for (const { calorieValue } of entries) {
+      if (!calorieValue) continue;
+      calories += calorieValue;
     }
     return calories;
   }
+
+  const updateCalorieValue = (
+    e: CustomEvent<{ calories: number }>,
+    index: number
+  ) => {
+    entries[index] = { ...entries[index], calorieValue: e.detail.calories };
+  };
 </script>
 
 <fieldset id={name}>
   <legend>{name}</legend>
   <div class="input-container">
-    {#each entries as { entryNumber, inputEl } (entryNumber - 1)}
+    {#each entries as { entryNumber }, index (entryNumber - 1)}
       <label for="${name}-${entryNumber}-name">Entry {entryNumber} Name</label>
       <input type="text" id="${name}-${entryNumber}-name" placeholder="Name" />
-      <CalorieNumberInput bind:this={inputEl} {name} order={entryNumber} />
+      <CalorieNumberInput
+        on:newInput={(e) => updateCalorieValue(e, index)}
+        {name}
+        order={entryNumber}
+      />
     {/each}
   </div>
   <button on:click={addEntry} type="button" id="add-entry">Add Entry</button>

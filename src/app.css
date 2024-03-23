@@ -70,10 +70,6 @@ select {
   text-align: center;
 }
 
-.hide {
-  display: none;
-}
-
 .output span {
   font-weight: bold;
   font-size: 1.2em;
@@ -81,8 +77,10 @@ select {
 
 .surplus {
   color: var(--light-pink);
+  text-transform: capitalize;
 }
 
 .deficit {
   color: var(--light-green);
+  text-transform: capitalize;
 }
